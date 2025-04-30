@@ -379,6 +379,7 @@
             border-radius: 25%;
             transition: background-color 0.2s;
         }
+
         .controls {
             display: flex;
             justify-content: space-between;
@@ -405,10 +406,12 @@
             border-color: color-mix(in srgb, var(--border-color) 70%, var(--primary-text));
             background-color: color-mix(in srgb, var(--secondary-bg) 95%, var(--primary-text));
         }
-        #clearAll:hover{
+
+        #clearAll:hover {
             background-color: var(--accent-color);
             color: white;
         }
+
         .generate-btn {
             padding: 12px 25px;
             font-size: 16px;
@@ -418,12 +421,7 @@
             border-radius: 6px;
             cursor: pointer;
             transition: background-color var(--transition-duration), transform 0.1s, opacity 0.2s;
-            display: block;
-            /* Make it block level */
-            width: 100%;
-            /* Full width */
-            margin-top: 10px;
-            /* Add margin above */
+            width: 20%;
         }
 
         .generate-btn:hover:not(:disabled) {
@@ -473,8 +471,29 @@
         h3 {
             color: var(--secondary-text);
         }
+
         .Logo {
             color: var(--accent-color);
+        }
+
+        .name {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .name input {
+            width: 50%;
+            padding: 7.5px;
+            font-size: 20px;
+            background-color: var(--secondary-bg);
+            border: var(--border-color) 2px solid;
+            border-radius: 5px;
+            color: white;
+            outline: none;
         }
     </style>
 </head>
@@ -483,7 +502,7 @@
     <div class="container">
         <div class="header">
             <h1 class="Logo" style="font-size: 32px; font-family: 'Times New Roman', Times, serif;">Express PDF</h1>
-                <label class="switch" title="Toggle dark/light theme">
+            <label class="switch" title="Toggle dark/light theme">
                 <input type="checkbox" id="themeToggle">
                 <span class="slider round"></span>
         </div>
@@ -539,8 +558,12 @@
         <div id="progressContainer">
             <div id="progressBar"></div>
         </div>
-
-        <button id="generatePdf" class="generate-btn" disabled>Generate PDF</button>
+        <div class="submit">
+            <div class="name">
+                <input type="text" id="FileName" placeholder="File Name...">
+                <button id="generatePdf" class="generate-btn" disabled>Generate PDF</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -557,10 +580,7 @@
         const clearAllBtn = document.getElementById('clearAll');
         let noImagesMessage = document.getElementById('noImages'); // Use let as we might re-get after clearing
 
-        // --- State Variables ---
-        // Array to hold the actual File objects, maintaining their original upload order for reference.
-        // We will NOT rely on this array's order for PDF generation.
-        // The DOM elements' order in '#preview' will determine the PDF page order.
+      
         let files = [];
         let draggedItem = null; // To keep track of the item being dragged
 
@@ -1053,8 +1073,13 @@
                 // progressBar.textContent = '100%'; // Removed text as per CSS
 
 
-                // Save the generated PDF
-                pdf.save('ExpressPDF.pdf');
+                const nameInput = document.getElementById('FileName'); 
+                let pdfFileName = 'ExpressPDF.pdf';
+                if (nameInput && nameInput.value.trim() !== '') {
+                    pdfFileName = nameInput.value.trim() + '.pdf';
+                    nameInput.value = ''; // Clear the input field after use
+                }
+                pdf.save(pdfFileName);
 
             } catch (error) {
                 console.error("Error generating PDF:", error);
